@@ -7,6 +7,10 @@ import com.dmb.securityCourse.entities.Validation;
 import com.dmb.securityCourse.repositories.UtilisateurRepository;
 import com.dmb.securityCourse.repositories.ValidationRepository;
 import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -14,9 +18,10 @@ import java.time.Instant;
 import java.util.Map;
 import java.util.Optional;
 
+
 @AllArgsConstructor
 @Service
-public class UtilisateurService {
+public class UtilisateurService implements UserDetailsService {
     private UtilisateurRepository utilisateurRepository;
     private BCryptPasswordEncoder passwordEncoder;
     private ValidationService validationService;
@@ -54,5 +59,15 @@ public class UtilisateurService {
         utilisateurRepository.save(utilisateur);
         validation.setActivation(Instant.now());
         validationRepository.save(validation);
+    }
+
+    // Aller chercher le user ds la bd en fction du mail
+    //
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        return this.utilisateurRepository
+                .findByEmail(username)
+                .orElseThrow(() -> new  UsernameNotFoundException("Aucun utilisateur ne corespond à cet identifiant"));
+
     }
 }
