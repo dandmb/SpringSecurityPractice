@@ -1,5 +1,6 @@
 package com.dmb.securityCourse.controllers;
 
+import com.dmb.securityCourse.config.JwtService;
 import com.dmb.securityCourse.dto.AuthentificationDTO;
 import com.dmb.securityCourse.entities.Utilisateur;
 import com.dmb.securityCourse.services.UtilisateurService;
@@ -25,6 +26,7 @@ public class UtilisateurController {
 
     private AuthenticationManager authenticationManager;
     private UtilisateurService utilisateurService;
+    private JwtService jwtService;
 
     @PostMapping(path = "inscription")
     public void inscription(@RequestBody Utilisateur utilisateur) {
@@ -44,12 +46,11 @@ public class UtilisateurController {
         final Authentication authenticate = authenticationManager.authenticate(// on demande au authentificationManager d'authentifier le user
                 new UsernamePasswordAuthenticationToken(authentificationDTO.username(), authentificationDTO.password())
         );
-        log.info("resultat : {}",authenticate.isAuthenticated());
-        /*
+        //log.info("resultat : {}",authenticate.isAuthenticated());
+
         if(authenticate.isAuthenticated()) {
             return this.jwtService.generate(authentificationDTO.username());
         }
-        */
         return null;
     }
 }

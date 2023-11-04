@@ -64,10 +64,9 @@ public class UtilisateurService implements UserDetailsService {
     // Aller chercher le user ds la bd en fction du mail
     //
     @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+    public Utilisateur loadUserByUsername(String username) throws UsernameNotFoundException {
         return this.utilisateurRepository
                 .findByEmail(username)
                 .orElseThrow(() -> new  UsernameNotFoundException("Aucun utilisateur ne corespond à cet identifiant"));
-
     }
 }
