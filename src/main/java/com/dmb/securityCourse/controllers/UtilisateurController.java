@@ -11,10 +11,7 @@ import org.springframework.http.MediaType;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
 
@@ -27,26 +24,33 @@ public class UtilisateurController {
     private AuthenticationManager authenticationManager;
     private UtilisateurService utilisateurService;
     private JwtService jwtService;
-
     @PostMapping(path = "inscription")
     public void inscription(@RequestBody Utilisateur utilisateur) {
-        log.info("inscription");
+        log.info("Inscription");
         this.utilisateurService.inscription(utilisateur);
     }
 
     @PostMapping(path = "activation")
-    public void activation(@RequestBody Map<String,String> activation) {
-        log.info("inscription");
+    public void activation(@RequestBody Map<String, String> activation) {
         this.utilisateurService.activation(activation);
+    }
+
+    @PostMapping(path = "refresh-token")
+    public @ResponseBody Map<String, String> refreshToken(@RequestBody Map<String, String> refreshTokenRequest) {
+        return this.jwtService.refreshToken(refreshTokenRequest);
+    }
+
+    @PostMapping(path = "deconnexion")
+    public void deconnexion() {
+        log.info("deconnexion");
+        this.jwtService.deconnexion();
     }
 
     @PostMapping(path = "connexion")
     public Map<String, String> connexion(@RequestBody AuthentificationDTO authentificationDTO) {
-
-        final Authentication authenticate = authenticationManager.authenticate(// on demande au authentificationManager d'authentifier le user
+        final Authentication authenticate = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(authentificationDTO.username(), authentificationDTO.password())
         );
-        //log.info("resultat : {}",authenticate.isAuthenticated());
 
         if(authenticate.isAuthenticated()) {
             return this.jwtService.generate(authentificationDTO.username());
